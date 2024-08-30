@@ -15,8 +15,12 @@ import Codec.Wavefront.Lexer ( lexer )
 import Codec.Wavefront.Object ( WavefrontOBJ, ctxtToWavefrontOBJ )
 import Codec.Wavefront.Token ( tokenize )
 import Control.Monad.IO.Class ( MonadIO(..) )
+import Data.Text ( Text )
 import qualified Data.Text.IO as T ( readFile )
 
 -- |Extract a 'WavefrontOBJ' from a Wavefront OBJ formatted file.
 fromFile :: (MonadIO m) => FilePath -> m (Either String WavefrontOBJ)
-fromFile fd = liftIO $ fmap (fmap (ctxtToWavefrontOBJ . lexer) . tokenize) (T.readFile fd)
+fromFile fd = liftIO $ fmap fromText (T.readFile fd)
+
+fromText :: Text -> Either String WavefrontOBJ
+fromText = fmap (ctxtToWavefrontOBJ . lexer) . tokenize
